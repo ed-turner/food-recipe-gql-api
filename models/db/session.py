@@ -1,5 +1,5 @@
 
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import create_engine
 
 
@@ -15,7 +15,9 @@ def get_session():
 
     :return:
     """
-    session = SessionLocal()
+
+    session: Session = SessionLocal()
+
     try:
         yield session
     except Exception as e:

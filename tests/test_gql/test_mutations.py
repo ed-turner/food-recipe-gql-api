@@ -31,18 +31,6 @@ def test_create_recipe(db_session, db_data):
 
     _data = {
         "name": "rice",
-        "recipeTags": [
-            {
-                "name": "general"
-            }
-        ],
-        "recipeItems": [
-            {
-                "name": "water",
-                "measureQuantity": 1,
-                "measureUnit": "CUP"
-            }
-        ]
     }
 
     executed = schema.execute(

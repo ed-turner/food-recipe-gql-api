@@ -12,12 +12,14 @@ COPY poetry.lock .
 
 RUN poetry install
 
-COPY gql .
-COPY models .
+COPY gql gql
+COPY models models
 COPY settings.py .
 COPY app.py .
 
-CMD ["uvicorn", "main:create_app", "--host", "0.0.0.0", "--port", "$PORT"]
+ENV PORT=80
+
+CMD ["uvicorn", "app:create_app", "--host", "0.0.0.0", "--port","80"]
 
 
 

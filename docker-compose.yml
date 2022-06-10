@@ -11,9 +11,8 @@ services:
     depends_on:
       - database
     ports:
-      - 3000:3000
+      - 3000:80
     environment:
-      PORT: 3000
       DATABASE_URL: postgresql://username:password@database:5432/default_database
 
   database:

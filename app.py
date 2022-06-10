@@ -1,9 +1,12 @@
 import fastapi
-from gql.schema import schema
+
+from starlette.datastructures import URL
 from starlette_graphene3 import GraphQLApp, make_graphiql_handler
 from starlette_exporter import PrometheusMiddleware, handle_metrics
 from starlette_exporter.optional_metrics import response_body_size, \
     request_body_size
+
+from gql.schema import schema
 
 
 def create_app():
@@ -15,13 +18,6 @@ def create_app():
     @app.get("/health")
     def health_check():
         return "ping"
-
-    app.mount("/", GraphQLApp(
-        schema,
-        on_get=make_graphiql_handler(),
-        context_value={"session": lambda: get_session()}
-    )
-              )  # Graphiql IDE
 
     app.add_middleware(
         PrometheusMiddleware,
@@ -38,41 +34,49 @@ def create_app():
         except:
             pass
 
+    @app.post("/")
+    async def post_graphql(
+            request: fastapi.Request,
+            session=fastapi.Depends(get_session),
+    ):
+        content_type = request.headers.get("Content-Type", "")
 
+        if "application/json" in content_type:
+            data = await request.json()
 
-# @app.post("/graphql")
-# async def post_graphql(
-#     request: fastapi.Request,
-#     session: Session = Depends(get_session),
-# ):
-#     content_type = request.headers.get("Content-Type", "")
-#
-#     if "application/json" in content_type:
-#         data = await request.json()
-#
-#     elif "application/graphql" in content_type:
-#         body = await request.body()
-#         text = body.decode()
-#         data = {"query": text}
-#
-#     elif "query" in request.query_params:
-#         data = request.query_params
-#
-#     else:
-#         raise fastapi.HTTPException(
-#             status_code=fastapi.status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-#             detail="Unsupported Media Type",
-#         )
-#
-#     if not (q_body := data.get("query")):
-#         raise fastapi.HTTPException(status_code=400, detail=f"Unsupported method: {q_body}")
-#
-#     res = await schema.execute_async(
-#         q_body,
-#         context_value={"request": request, "session": session},
-#     )
-#
-#     return res.to_dict()
+        elif "application/graphql" in content_type:
+            body = await request.body()
+            text = body.decode()
+            data = {"query": text}
+
+        elif "query" in request.query_params:
+            data = request.query_params
+
+        else:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                detail="Unsupported Media Type",
+            )
+
+        if not (q_body := data.get("query")):
+            raise fastapi.HTTPException(status_code=400, detail=f"Unsupported method: {q_body}")
+
+        res = schema.execute(
+            q_body,
+            context_value={"request": request, "session": session},
+        )
+
+        res_dict = {"data": res.data}
+
+        if res.errors is None:
+            pass
+        else:
+            res_dict["errors"] = str(res.errors)
+
+        return res_dict
+
+    return app
+
 
 if __name__ == "__main__":
 

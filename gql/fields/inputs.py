@@ -1,6 +1,6 @@
 from graphene_pydantic import PydanticInputObjectType
 
-from models.response import PydanticTags, PydanticRecipeItem, PydanticRecipeWithItems
+from models.response import PydanticTags, PydanticRecipeItem, PydanticRecipe
 
 
 class TagInputType(PydanticInputObjectType):
@@ -21,7 +21,7 @@ class RecipeItemInputType(PydanticInputObjectType):
 
     class Meta:
         model = PydanticRecipeItem
-        exclude_fields = ("id",)
+        exclude_fields = ("id", "recipeId")
         # exclude specified fields
 
 
@@ -31,7 +31,7 @@ class RecipeInputType(PydanticInputObjectType):
     """
 
     class Meta:
-        model = PydanticRecipeWithItems
+        model = PydanticRecipe
         exclude_fields = ("id",)
         # exclude specified fields
 

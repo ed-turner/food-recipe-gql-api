@@ -1,5 +1,3 @@
-import pytest
-
 from graphene.relay.node import to_global_id, from_global_id
 from gql.schema import schema
 
@@ -108,7 +106,7 @@ def test_get_tagged_recipes(db_session, db_data):
 
 
 def test_get_recipes(db_session, db_data):
-    global_id = to_global_id("RecipeObjectType", 1)
+
     executed = schema.execute(
         """
         query Recipes {
@@ -122,7 +120,6 @@ def test_get_recipes(db_session, db_data):
             }
         }
         """,
-        variable_values={"id": global_id},
         context_value={"session": db_session},
     )
     assert executed.errors is None

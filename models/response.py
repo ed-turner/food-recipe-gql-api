@@ -8,11 +8,3 @@ from models.db.tags import Tags
 PydanticRecipeItem = sqlalchemy_to_pydantic(RecipeItem)
 PydanticTags = sqlalchemy_to_pydantic(Tags)
 PydanticRecipe = sqlalchemy_to_pydantic(Recipe)
-
-
-class PydanticRecipeWithItems(PydanticRecipe):
-    """
-
-    """
-    recipeItems: List[PydanticRecipeItem] = []
-    recipeTags: List[PydanticTags] = []

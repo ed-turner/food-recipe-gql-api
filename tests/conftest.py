@@ -14,7 +14,7 @@ from models.db.tags import Tags
 from app import create_app
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def db_session(postgresql):
 
     connection = f'postgresql://{postgresql.info.user}:@{postgresql.info.host}:{postgresql.info.port}/{postgresql.info.dbname}'
@@ -35,7 +35,7 @@ def db_session(postgresql):
     Base.metadata.drop_all(engine)
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def db_data(db_session):
     """
 
@@ -76,7 +76,7 @@ def db_data(db_session):
     db_session.commit()
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def api_client(postgresql, db_data):
 
     connection = f"postgresql://{postgresql.info.user}:@{postgresql.info.host}:{postgresql.info.port}/{postgresql.info.dbname}"

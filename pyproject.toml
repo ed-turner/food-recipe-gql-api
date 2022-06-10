@@ -14,8 +14,9 @@ graphql-relay = "^3.2.0"
 SQLAlchemy = {extras = ["asyncio"], version = "^1.4.37"}
 psycopg2 = "^2.9.3"
 psycopg = "^3.0.14"
-uvicorn = "^0.17.6"
+uvicorn = {extras = ["standard"], version = "^0.17.6"}
 starlette-exporter = "^0.13.0"
+starlette-graphene3 = "^0.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
