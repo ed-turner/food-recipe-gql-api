@@ -1,0 +1,4 @@
+/db-data/
+/.pytest_cache/
+
+.venv
