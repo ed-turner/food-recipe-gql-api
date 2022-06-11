@@ -19,6 +19,7 @@ def test_get_tags(api_client):
     response = api_client.post("/", json={"query": _q})
 
     assert response.status_code == 200
+    assert response.json().get("errors", None) is None, response.json()["errors"]
 
     assert len(response.json()["data"]["tags"]["edges"]) == 1, response.content
 
@@ -40,6 +41,8 @@ def test_get_recipes(api_client):
     response = api_client.post("/", json={"query": _q})
 
     assert response.status_code == 200
+
+    assert response.json().get("errors", None) is None, response.json()["errors"]
 
     try:
         assert len(response.json()["data"]["recipes"]["edges"]) == 2, response.content
