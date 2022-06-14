@@ -10,7 +10,7 @@ RUN python -m pip install poetry
 COPY pyproject.toml .
 COPY poetry.lock .
 
-RUN poetry install
+RUN poetry install --no-dev
 
 COPY gql gql
 COPY models models
@@ -19,7 +19,7 @@ COPY app.py .
 
 ENV PORT=80
 
-CMD ["uvicorn", "app:create_app", "--host", "0.0.0.0", "--port","80"]
+CMD ["uvicorn", "app:create_app", "--host", "0.0.0.0", "--port", "80"]
 
 
 
