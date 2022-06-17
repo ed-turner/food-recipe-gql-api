@@ -1,6 +1,6 @@
 import graphene
 from graphene.relay.node import from_global_id, to_global_id
-from sqlalchemy.sql.expression import delete
+from sqlalchemy.sql.expression import delete, insert
 
 from models.db.recipe import Recipe
 from models.db.tags import Tags
@@ -30,24 +30,6 @@ class CreateRecipe(graphene.Mutation):
         db_recipe.name = recipe.name
         db_recipe.description = recipe.description
         db_recipe.direction = recipe.direction
-
-        # if len(recipe.recipeTags) == 0:
-        #     pass
-        # else:
-        #     tags = []
-        #
-        #     for tag in recipe.recipeTags:
-        #         _tag = db_session.query(Tags).filter(Tags.name == tag.name).first()
-        #
-        #         if _tag is None:
-        #             _tag = Tags(name=tag.name)
-        #             db_session.add(_tag)
-        #
-        #         tags.append(
-        #             _tag
-        #         )
-        #
-        #     db_recipe.recipe_tags = tags
 
         db_session.add(db_recipe)
 
@@ -114,6 +96,45 @@ class RemoveRecipe(graphene.Mutation):
         db_session.delete(recipe)
 
         db_session.commit()
+
+
+class AddRecipeTag(graphene.Mutation):
+
+    class Arguments:
+        recipeId = graphene.Argument(graphene.String, required=True)
+        tagName = graphene.Argument(graphene.String, required=True)
+
+    Output = graphene.types.Boolean
+
+    @staticmethod
+    def mutate(parent, info, recipeId, tagName):
+        """
+
+        :param parent:
+        :param info:
+        :param recipeId:
+        :param tagName:
+        :return:
+        """
+        db_session = info.context["session"]
+
+        tag = Tags()
+        tag.name = tagName
+
+        db_session.add(tag)
+
+        db_session.flush()
+
+        tagId = tag.id
+
+        db_session.commit()
+
+        statement = insert(recipe_tags_table).value(
+            recipe_id=int(from_global_id(recipeId)[1]),
+            tag_id=tagId
+        )
+
+        db_session.execute(statement)
 
 
 class RemoveRecipeTag(graphene.Mutation):
