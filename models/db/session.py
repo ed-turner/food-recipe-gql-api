@@ -48,3 +48,5 @@ async def get_async_session():
                 await session.rollback()
 
                 raise e
+            finally:
+                await session.close()
