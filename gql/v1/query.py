@@ -2,7 +2,7 @@ import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyConnectionField
 
-from gql.fields.objects import RecipeObjectType, TagObjectType, RecipeItemObjectType
+from gql.v1.fields.objects import RecipeObjectType, TagObjectType, RecipeItemObjectType
 
 
 class Query(graphene.ObjectType):

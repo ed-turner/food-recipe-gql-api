@@ -3,9 +3,8 @@ from graphene.relay.node import from_global_id, to_global_id
 from sqlalchemy.sql.expression import delete
 
 from models.db.recipe import Recipe
-from models.db.tags import Tags
 from models.db.associations import recipe_tags_table
-from gql.fields.inputs import RecipeInputType
+from gql.v1.fields.inputs import RecipeInputType
 
 
 class CreateRecipe(graphene.Mutation):

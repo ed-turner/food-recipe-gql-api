@@ -1,4 +1,4 @@
-from gql.schema import schema
+from gql.v1.schema import schema
 
 from graphene.relay.node import from_global_id, to_global_id
 

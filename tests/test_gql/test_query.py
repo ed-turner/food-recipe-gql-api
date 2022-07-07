@@ -1,5 +1,5 @@
 from graphene.relay.node import to_global_id, from_global_id
-from gql.schema import schema
+from gql.v1.schema import schema
 
 
 def test_get_recipe(db_session, db_data):

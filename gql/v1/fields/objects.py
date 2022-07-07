@@ -1,8 +1,7 @@
-import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyObjectType
 
-from gql.fields.base import SessionSQLAlchemyObjectType
+from gql.v1.fields.base import SessionSQLAlchemyObjectType
 from models.db.recipe import Recipe
 from models.db.recipe_items import RecipeItem
 from models.db.tags import Tags
