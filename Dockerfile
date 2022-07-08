@@ -19,7 +19,7 @@ COPY app.py .
 
 ENV PORT=80
 
-CMD ["uvicorn", "app:create_app", "--host", "0.0.0.0", "--port","80"]
+CMD ["poetry", "run", "uvicorn", "app:create_app", "--host", "0.0.0.0", "--port","80"]
 
 
 

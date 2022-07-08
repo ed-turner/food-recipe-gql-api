@@ -1,14 +1,14 @@
 import graphene
 
-from .mutations.recipe import CreateRecipe, ModifyRecipeName, RemoveRecipe, \
-    RemoveRecipeTag
+from .mutations.recipe import ModifyRecipeName, RemoveRecipe, \
+    RemoveRecipeTag#, CreateRecipe
 from .mutations.recipe_item import ModifyRecipeItemName, ModifyRecipeItemMeasureUnit, \
     ModifyRecipeItemMeasureQuantity
 
 
 class Mutation(graphene.ObjectType):
 
-    createRecipe = CreateRecipe.Field()
+    # createRecipe = CreateRecipe.Field()
 
     modifyRecipeName = ModifyRecipeName.Field()
 

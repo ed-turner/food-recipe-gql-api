@@ -26,8 +26,19 @@ def test_get_recipe1(api_client):
         raise AssertionError(response.json()["errors"])
 
 
-def test_get_recipes(api_client):
+def test_ping(api_client):
+    """
 
+    :param api_client:
+    :return:
+    """
+    response = api_client.get("/health")
+
+    assert response.status_code == 200
+
+
+def test_get_recipes(api_client):
+    # this breaks for no reason
     _q = """
         {
             recipes

@@ -1,7 +1,5 @@
 import fastapi
 
-from starlette.datastructures import URL
-from starlette_graphene3 import GraphQLApp, make_graphiql_handler
 from starlette_exporter import PrometheusMiddleware, handle_metrics
 from starlette_exporter.optional_metrics import response_body_size, \
     request_body_size

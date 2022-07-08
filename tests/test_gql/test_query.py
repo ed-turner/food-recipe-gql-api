@@ -1,3 +1,4 @@
+from pytest import mark
 from graphene.relay.node import to_global_id, from_global_id
 from gql.schema import schema
 
@@ -122,7 +123,7 @@ def test_get_recipes(db_session, db_data):
         """,
         context_value={"session": db_session},
     )
-    assert executed.errors is None
+    assert executed.errors is None, executed.errors
     recipes = executed.data["recipes"]["edges"]
 
     assert len(recipes) == 2

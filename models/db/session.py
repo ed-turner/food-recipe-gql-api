@@ -10,8 +10,30 @@ from settings import Settings
 engine = create_engine(Settings().DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 
-async_engine = create_async_engine(Settings().DATABASE_URL)
-AsyncSessionLocal = sessionmaker(bind=async_engine, class_=AsyncSession)
+try:
+    async_engine = create_async_engine(Settings().DATABASE_URL)
+    AsyncSessionLocal = sessionmaker(bind=async_engine, class_=AsyncSession)
+
+
+    async def get_async_session():
+        """
+
+        :return:
+        """
+
+        async with AsyncSessionLocal() as session:
+            async with session.begin():
+                try:
+                    yield session
+                except Exception as e:
+                    await session.rollback()
+
+                    raise e
+                finally:
+                    await session.close()
+
+except Exception:
+    pass
 
 
 def get_session():
@@ -32,21 +54,3 @@ def get_session():
 
     finally:
         session.close()
-
-
-async def get_async_session():
-    """
-
-    :return:
-    """
-
-    async with AsyncSessionLocal() as session:
-        async with session.begin():
-            try:
-                yield session
-            except Exception as e:
-                await session.rollback()
-
-                raise e
-            finally:
-                await session.close()
