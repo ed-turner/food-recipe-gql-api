@@ -17,9 +17,11 @@ COPY models models
 COPY settings.py .
 COPY app.py .
 
+COPY ./start.sh /start.sh
+RUN chmod +x /start.sh
+
 ENV PORT=80
 
-CMD ["poetry", "run", "uvicorn", "app:create_app", "--host", "0.0.0.0", "--port","80"]
-
+CMD ["./start.sh"]
 
 
