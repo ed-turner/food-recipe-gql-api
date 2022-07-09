@@ -519,6 +519,17 @@ pymysql = ["pymysql (<1)", "pymysql"]
 sqlcipher = ["sqlcipher3-binary"]
 
 [[package]]
+name = "sqlalchemy-bulk-lazy-loader"
+version = "0.10.0"
+description = "A Bulk Lazy Loader for Sqlalchemy that solves the n + 1 loading problem"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+SQLAlchemy = ">=1.4,<2.0"
+
+[[package]]
 name = "starlette"
 version = "0.19.1"
 description = "The little ASGI library that shines."
@@ -627,7 +638,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "88ee61b399319828918e367af35836dfb0df4ac6f6bfb102c0a7713080800aca"
+content-hash = "986c11951ead01e592278268bbc796426afe084333ef4a8a6cec3e18f1d34fc1"
 
 [metadata.files]
 aniso8601 = []
@@ -971,6 +982,7 @@ sniffio = [
     {file = "sniffio-1.2.0.tar.gz", hash = "sha256:c4666eecec1d3f50960c6bdf61ab7bc350648da6c126e3cf6898d8cd4ddcd3de"},
 ]
 sqlalchemy = []
+sqlalchemy-bulk-lazy-loader = []
 starlette = [
     {file = "starlette-0.19.1-py3-none-any.whl", hash = "sha256:5a60c5c2d051f3a8eb546136aa0c9399773a689595e099e0877704d5888279bf"},
     {file = "starlette-0.19.1.tar.gz", hash = "sha256:c6d21096774ecb9639acad41b86b7706e52ba3bf1dc13ea4ed9ad593d47e24c7"},

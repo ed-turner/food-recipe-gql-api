@@ -12,5 +12,6 @@ class Tags(Base):
     name = Column(String, unique=True, nullable=False)
 
     tagged_recipes = relationship('Recipe',
+                                  lazy='bulk',
                                   secondary=recipe_tags_table,
                                   back_populates="recipe_tags")

@@ -15,12 +15,14 @@ class Recipe(Base):
 
     recipe_tags = relationship(
         'Tags',
+        lazy='bulk',
         secondary=recipe_tags_table,
         back_populates="tagged_recipes",
     )
 
     recipe_items = relationship(
         'RecipeItem',
+        lazy='bulk',
         back_populates="recipe",
         cascade="all, delete, delete-orphan"
     )

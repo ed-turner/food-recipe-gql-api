@@ -127,3 +127,26 @@ def test_get_recipes(db_session, db_data):
     recipes = executed.data["recipes"]["edges"]
 
     assert len(recipes) == 2
+
+
+def test_get_curry_recipes(db_session, db_data):
+
+    executed = schema.execute(
+        """
+        query Recipes {
+            recipes(filters: {nameIlike: "%s"})
+            {
+                edges {
+                    node {
+                        id
+                    }
+                }
+            }
+        }
+        """ % ("curry"),
+        context_value={"session": db_session},
+    )
+    assert executed.errors is None, executed.errors
+    recipes = executed.data["recipes"]["edges"]
+
+    assert len(recipes) == 1

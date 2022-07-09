@@ -16,6 +16,7 @@ starlette-exporter = "^0.13.0"
 graphql-relay = "2.0.1"
 graphene-sqlalchemy = "^2.3.0"
 graphene-sqlalchemy-filter = "^1.13.0"
+SQLAlchemy-bulk-lazy-loader = "^0.10.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"

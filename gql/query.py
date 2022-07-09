@@ -1,8 +1,9 @@
 import graphene
 from graphene import relay
-from graphene_sqlalchemy import SQLAlchemyConnectionField
+from graphene_sqlalchemy_filter import FilterableConnectionField
 
 from gql.fields.objects import RecipeObjectType, TagObjectType, RecipeItemObjectType
+from gql.fields.filters import RecipeFilter, RecipeItemFilter, TagsFilter
 
 
 class Query(graphene.ObjectType):
@@ -11,14 +12,17 @@ class Query(graphene.ObjectType):
     """
     node = relay.Node.Field()
 
-    recipes = SQLAlchemyConnectionField(
-        RecipeObjectType.connection
+    recipes = FilterableConnectionField(
+        RecipeObjectType.connection,
+        filters=RecipeFilter()
     )
 
-    recipe_items = SQLAlchemyConnectionField(
-        RecipeItemObjectType.connection
+    recipe_items = FilterableConnectionField(
+        RecipeItemObjectType.connection,
+        filters=RecipeItemFilter()
     )
 
-    tags = SQLAlchemyConnectionField(
-        TagObjectType.connection
+    tags = FilterableConnectionField(
+        TagObjectType.connection,
+        filters=TagsFilter()
     )

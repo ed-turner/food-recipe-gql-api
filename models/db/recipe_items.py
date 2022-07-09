@@ -13,6 +13,6 @@ class RecipeItem(Base):
     measureQuantity = Column(Float, nullable=False)
     measureUnit = Column(String, nullable=False)
 
-    recipe = relationship('Recipe', uselist=False, back_populates="recipe_items")
+    recipe = relationship('Recipe', uselist=False, lazy='bulk', back_populates="recipe_items")
     recipe_id = Column(ForeignKey('recipe.id'), nullable=False)
 
