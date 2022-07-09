@@ -1,4 +1,3 @@
-from pytest import mark
 from graphene.relay.node import to_global_id, from_global_id
 from gql.schema import schema
 
