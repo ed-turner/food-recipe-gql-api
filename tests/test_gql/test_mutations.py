@@ -29,7 +29,6 @@ def test_create_recipe_item(db_session, db_data):
     assert res
 
 
-@mark.skip
 def test_create_recipe(db_session, db_data):
 
     _data = {

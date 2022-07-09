@@ -1,20 +1,17 @@
-from graphene_pydantic import PydanticInputObjectType
+import graphene
 
-from models.response import PydanticTags, PydanticRecipeItem, PydanticRecipe
+from graphene.types import InputObjectType
+from models.response import PydanticTags, PydanticRecipeItem
 
 
-class TagInputType(PydanticInputObjectType):
+class TagInputType(InputObjectType):
     """
 
     """
-
-    class Meta:
-        model = PydanticTags
-        exclude_fields = ("id",)
-        # exclude specified fields
+    name = graphene.String(required=True)
 
 
-class RecipeItemInputType(PydanticInputObjectType):
+class RecipeItemInputType(InputObjectType):
     """
 
     """
@@ -25,17 +22,10 @@ class RecipeItemInputType(PydanticInputObjectType):
         # exclude specified fields
 
 
-class RecipeInputType(PydanticInputObjectType):
+class RecipeInputType(InputObjectType):
     """
 
     """
 
-    class Meta:
-        model = PydanticRecipe
-        exclude_fields = ("id",)
-        # exclude specified fields
-
-
-TagInputType.resolve_placeholders()
-RecipeItemInputType.resolve_placeholders()
-RecipeInputType.resolve_placeholders()
+    name = graphene.String(required=True)
+    description = graphene.String()
