@@ -2,42 +2,42 @@ import graphene
 from graphene.relay.node import from_global_id
 
 from models.db.recipe_items import RecipeItem
-#from ..fields.inputs import RecipeItemInputType
+from ..fields.inputs import RecipeItemInputType
 
 
-# class CreateRecipeItem(graphene.Mutation):
-#
-#     class Arguments:
-#         recipeItem = RecipeItemInputType(required=True)
-#         recipeId = graphene.Argument(graphene.String, required=True)
-#
-#     Output = graphene.types.Boolean
-#
-#     @staticmethod
-#     def mutate(parent, info, recipeId, recipeItem):
-#         """
-#
-#         :param parent:
-#         :param info:
-#         :param recipeId:
-#         :param recipeItem:
-#         :return:
-#         """
-#         db_session = info.context["session"]
-#
-#         db_recipe_item = RecipeItem()
-#
-#         db_recipe_item.name = recipeItem.name
-#         db_recipe_item.measureQuantity = recipeItem.measureQuantity
-#         db_recipe_item.measureUnit = recipeItem.measureUnit
-#         db_recipe_item.recipe_id = int(from_global_id(recipeId)[1])
-#
-#         db_session.add(db_recipe_item)
-#
-#         db_session.commit()
-#
-#         return True
-#
+class CreateRecipeItem(graphene.Mutation):
+
+    class Arguments:
+        recipeItem = RecipeItemInputType(required=True)
+        recipeId = graphene.Argument(graphene.String, required=True)
+
+    Output = graphene.types.Boolean
+
+    @staticmethod
+    def mutate(parent, info, recipeId, recipeItem):
+        """
+
+        :param parent:
+        :param info:
+        :param recipeId:
+        :param recipeItem:
+        :return:
+        """
+        db_session = info.context["session"]
+
+        db_recipe_item = RecipeItem()
+
+        db_recipe_item.name = recipeItem.name
+        db_recipe_item.measureQuantity = recipeItem.measureQuantity
+        db_recipe_item.measureUnit = recipeItem.measureUnit
+        db_recipe_item.recipe_id = int(from_global_id(recipeId)[1])
+
+        db_session.add(db_recipe_item)
+
+        db_session.commit()
+
+        return True
+
 
 class ModifyRecipeItemName(graphene.Mutation):
     class Arguments:

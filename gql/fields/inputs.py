@@ -1,7 +1,6 @@
 import graphene
 
 from graphene.types import InputObjectType
-from models.response import PydanticTags, PydanticRecipeItem
 
 
 class TagInputType(InputObjectType):
@@ -16,10 +15,9 @@ class RecipeItemInputType(InputObjectType):
 
     """
 
-    class Meta:
-        model = PydanticRecipeItem
-        exclude_fields = ("id", "recipeId")
-        # exclude specified fields
+    name = graphene.String(required=True)
+    measureQuantity = graphene.Float(required=True)
+    measureUnit = graphene.String(required=True)
 
 
 class RecipeInputType(InputObjectType):
