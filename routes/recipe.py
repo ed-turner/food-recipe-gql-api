@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.sql.operators import ilike_op
 from sqlalchemy.orm import selectinload
 from fastapi import APIRouter, Depends, HTTPException
@@ -98,6 +98,8 @@ async def find_recipe(
 
     return (await session.execute(stmt)).all()
 
+#  POST METHODS
+
 
 @router.post("/create")
 async def create_recipe(
@@ -136,7 +138,7 @@ async def create_recipe(
     return recipe_id
 
 
-@router.post("/{recipe_id}/tag")
+@router.post("/tag/{recipe_id}")
 async def tag_recipe(
     recipe_id: int,
     tag: str,
@@ -150,11 +152,8 @@ async def tag_recipe(
     :return:
     """
 
-    stmt = select(Tags).filter(Tags.name == tag).filter(
-        Tags.tagged_recipes.has(
-            Recipe.id == recipe_id
-        )
-    )
+    stmt = select(Recipe).where(Recipe.id == recipe_id)\
+        .join(Tags.tagged_recipes).filter(Tags.name == tag)
 
     res = await session.execute(stmt)
 
@@ -183,7 +182,7 @@ async def tag_recipe(
     await session.commit()
 
 
-@router.post("/{recipe_id}/item/add")
+@router.post("/item/add/{recipe_id}")
 async def add_item_to_recipe(
         recipe_id: int,
         recipe_item: PydanticRecipeItem,
@@ -196,3 +195,36 @@ async def add_item_to_recipe(
     :param session:
     :return:
     """
+    recipe: Recipe = await session.get(Recipe, recipe_id)
+
+    db_recipe_item = RecipeItem()
+
+    db_recipe_item.name = recipe_item.name
+    db_recipe_item.measureUnit = recipe_item.measureUnit
+    db_recipe_item.measureQuantity = recipe_item.measureQuantity
+
+    if recipe.recipe_items is None:
+        recipe.recipe_items = [db_recipe_item]
+    else:
+        recipe.recipe_items.append(
+            db_recipe_item
+        )
+
+    await session.commit()
+
+
+@router.post("/item/remove/{item_id}")
+async def remove_item_to_recipe(
+        item_id: int,
+        session: AsyncSession = Depends(get_async_session)
+) -> None:
+    """
+
+    :param item_id:
+    :param session:
+    :return:
+    """
+
+    stmt = delete(RecipeItem).where(RecipeItem.id == item_id)
+
+    await session.execute(stmt)
