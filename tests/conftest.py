@@ -79,8 +79,10 @@ def db_data(db_session):
 @pytest.fixture(scope="function")
 def api_client(postgresql, db_data):
 
-    connection = f"postgresql://{postgresql.info.user}:@{postgresql.info.host}:{postgresql.info.port}/{postgresql.info.dbname}"
+    connection = f"postgresql+asyncpg://{postgresql.info.user}:@{postgresql.info.host}:{postgresql.info.port}/{postgresql.info.dbname}"
 
     os.environ["DATABASE_URL"] = connection
 
-    return TestClient(create_app())
+    with TestClient(create_app()) as client:
+        yield client
+

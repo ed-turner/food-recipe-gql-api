@@ -4,12 +4,13 @@ from starlette_exporter import PrometheusMiddleware, handle_metrics
 from starlette_exporter.optional_metrics import response_body_size, \
     request_body_size
 
-from gql.schema import schema
-
 
 def create_app():
-    from models.db.session import get_session, engine
+    from models.db.session import db
     from models.db.base import Base
+
+    from routes.tag import router as tag_router
+    from routes.recipe import router as recipe_router
 
     app = fastapi.FastAPI()
 
@@ -26,52 +27,16 @@ def create_app():
     app.add_route("/metrics", handle_metrics)
 
     @app.on_event("startup")
-    def startup():
-        try:
-            Base.metadata.create_all(engine)
-        except:
-            pass
+    async def startup():
+        await db.init()
+        await db.create_all()
 
-    @app.post("/")
-    async def post_graphql(
-            request: fastapi.Request,
-            session=fastapi.Depends(get_session),
-    ):
-        content_type = request.headers.get("Content-Type", "")
+    @app.on_event('shutdown')
+    async def shutdown_event():
+        await db.close()
 
-        if "application/json" in content_type:
-            data = await request.json()
-
-        elif "application/graphql" in content_type:
-            body = await request.body()
-            text = body.decode()
-            data = {"query": text}
-
-        elif "query" in request.query_params:
-            data = request.query_params
-
-        else:
-            raise fastapi.HTTPException(
-                status_code=fastapi.status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-                detail="Unsupported Media Type",
-            )
-
-        if not (q_body := data.get("query")):
-            raise fastapi.HTTPException(status_code=400, detail=f"Unsupported method: {q_body}")
-
-        res = schema.execute(
-            q_body,
-            context_value={"request": request, "session": session},
-        )
-
-        res_dict = {"data": res.data}
-
-        if res.errors is None:
-            pass
-        else:
-            res_dict["errors"] = str(res.errors)
-
-        return res_dict
+    app.include_router(recipe_router)
+    app.include_router(tag_router)
 
     return app
 

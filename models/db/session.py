@@ -1,56 +1,63 @@
 
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio.engine import create_async_engine
-from sqlalchemy import create_engine
-
+from .base import Base
 
 from settings import Settings
 
-engine = create_engine(Settings().DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
 
-try:
-    async_engine = create_async_engine(Settings().DATABASE_URL)
-    AsyncSessionLocal = sessionmaker(bind=async_engine, class_=AsyncSession)
+class Database:
+    def __init__(self, url):
+        self._session = None
+        self._engine = None
+
+        if "asyncpg" in url:
+            pass
+        else:
+            url = url.replace("postgresql", "postgresql+asyncpg")
+
+        self.url = url
+
+    async def create_all(self):
+        async with self._engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+
+    def __getattr__(self, name) -> AsyncSession:
+        return getattr(self._session, name)
+
+    async def init(self):
+        # closes connections if a session is created,
+        # so as not to create repeated connections
+        if self._session:
+            await self._session.close()
+
+        self._engine = create_async_engine(self.url, future=True)
+        self._session = sessionmaker(
+            self._engine,
+            expire_on_commit=False,
+            class_=AsyncSession
+        )()
 
 
-    async def get_async_session():
-        """
+DATABASE_URL = Settings().DATABASE_URL
 
-        :return:
-        """
-
-        async with AsyncSessionLocal() as session:
-            async with session.begin():
-                try:
-                    yield session
-                except Exception as e:
-                    await session.rollback()
-
-                    raise e
-                finally:
-                    await session.close()
-
-except Exception:
-    pass
+db: Database = Database(DATABASE_URL)
 
 
-def get_session():
+async def get_async_session():
     """
-    This is just an async method to get the session
 
     :return:
     """
 
-    session: Session = SessionLocal()
+    # async with db._session() as session:
+    async with db.begin():
+        try:
+            yield db
+        except Exception as e:
+            await db.rollback()
 
-    try:
-        yield session
-    except Exception as e:
-        session.rollback()
-
-        raise e
-
-    finally:
-        session.close()
+            raise e
+        finally:
+            await db.close()
