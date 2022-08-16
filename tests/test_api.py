@@ -39,24 +39,66 @@ def test_get_recipes(api_client):
 
     assert len(response.json()) < 10
 
-def test_get_tags(api_client):
 
-    _q = """
-    {
-            tags
-            {
-                edges {
-                    node {
-                        id
-                    }
-                }
-            }
-        }
-    """
+def test_search_by_tag(api_client):
+    response = api_client.get("/recipe/search?recipe_tag=indian")
 
-    response = api_client.post("/", json={"query": _q})
+    if response.status_code == 200:
+        pass
+    else:
+        LOGGER.info(f"JSON Output of response: {response.json()}")
+        assert False
 
-    assert response.status_code == 200
-    assert response.json().get("errors", None) is None, response.json()["errors"]
+    if len(response.json()) == 2:
+        pass
+    else:
+        LOGGER.info(f"JSON Output of response: {response.json()}")
+        assert False
 
-    assert len(response.json()["data"]["tags"]["edges"]) == 1, response.content
+
+def test_search_by_name(api_client):
+    response = api_client.get("/recipe/search?recipe_name=vinladoo")
+
+    if response.status_code == 200:
+        pass
+    else:
+        LOGGER.info(f"JSON Output of response: {response.json()}")
+        assert False
+
+    if len(response.json()) == 1:
+        pass
+    else:
+        LOGGER.info(f"JSON Output of response: {response.json()}")
+        assert False
+
+
+def test_search_by_item_name(api_client):
+    response = api_client.get("/recipe/search?recipe_item_name=curry")
+
+    if response.status_code == 200:
+        pass
+    else:
+        LOGGER.info(f"JSON Output of response: {response.json()}")
+        assert False
+
+    if len(response.json()) == 1:
+        pass
+    else:
+        LOGGER.info(f"JSON Output of response: {response.json()}")
+        assert False
+
+
+def test_search_by_recipe_name_item_name(api_client):
+    response = api_client.get("/recipe/search?recipe_item_name=curry&recipe_name=curry")
+
+    if response.status_code == 200:
+        pass
+    else:
+        LOGGER.info(f"JSON Output of response: {response.json()}")
+        assert False
+
+    if len(response.json()) == 1:
+        pass
+    else:
+        LOGGER.info(f"JSON Output of response: {response.json()}")
+        assert False

@@ -15,6 +15,8 @@ from models.response import PydanticRecipe, PydanticRecipeItem, \
 
 router = APIRouter(prefix="/recipe")
 
+#  GET METHODS
+
 
 @router.get("/get/{recipe_id}")
 async def get_recipe(
@@ -56,6 +58,47 @@ async def get_page(
     return res.all()
 
 
+@router.get("/search")
+async def find_recipe(
+        recipe_name: Optional[str] = None,
+        recipe_item_name: Optional[str] = None,
+        recipe_tag: Optional[str] = None,
+        session: AsyncSession = Depends(get_async_session)
+) -> List[PydanticRecipe]:
+    """
+
+    :param recipe_name:
+    :param recipe_item_name:
+    :param recipe_tag:
+    :param session:
+    :return:
+    """
+    if all(
+            [recipe_tag is None,
+             recipe_name is None,
+             recipe_item_name is None]
+    ):
+        raise HTTPException(
+            status_code=404,
+            detail="All search parameters are none"
+        )
+
+    stmt = select(Recipe)
+
+    if recipe_name:
+        stmt = stmt.where(ilike_op(Recipe.name, f"%{recipe_name}%"))
+
+    if recipe_tag:
+        stmt = stmt.join(Tags.tagged_recipes).where(Tags.name == recipe_tag)
+
+    if recipe_item_name:
+        stmt = stmt.join(RecipeItem.recipe).where(
+            ilike_op(RecipeItem.name, f"%{recipe_item_name}%")
+        )
+
+    return (await session.execute(stmt)).all()
+
+
 @router.post("/create")
 async def create_recipe(
     recipe: PydanticRecipe,
@@ -91,67 +134,6 @@ async def create_recipe(
     await session.commit()
 
     return recipe_id
-
-
-@router.get("/search")
-async def find_recipe(
-        recipe_name: Optional[str] = None,
-        recipe_item_name: Optional[str] = None,
-        recipe_tag: Optional[str] = None,
-        session: AsyncSession = Depends(get_async_session)
-) -> List[PydanticRecipe]:
-    """
-
-    :param recipe_name:
-    :param recipe_item_name:
-    :param recipe_tag:
-    :param session:
-    :return:
-    """
-    if all(
-            [recipe_tag is None,
-             recipe_name is None,
-             recipe_item_name is None]
-    ):
-        raise HTTPException(
-            status_code=404,
-            detail="All search parameters are none"
-        )
-
-    if recipe_tag:
-        stmt = select(Tags.tagged_recipes).where(Tags.name == recipe_tag)
-
-        if recipe_name:
-            stmt = stmt.filter(
-                Tags.tagged_recipes.has(
-                    ilike_op(Recipe.name, f"%{recipe_name}%")
-                )
-            )
-        if recipe_item_name:
-            stmt = stmt.filter(
-                Tags.tagged_recipes.has(
-                    Recipe.recipe_items.has(
-                        ilike_op(RecipeItem.name, f"%{recipe_item_name}%")
-                    )
-                )
-            )
-    elif recipe_item_name:
-        stmt = select(RecipeItem.recipe).where(
-            ilike_op(RecipeItem.name, f"%{recipe_item_name}%")
-        )
-
-        if recipe_name:
-            stmt = stmt.filter(
-                RecipeItem.recipe.has(
-                    ilike_op(Recipe.name, f"%{recipe_name}%")
-                )
-            )
-    else:
-        stmt = select(Recipe)
-
-        stmt = stmt.where(ilike_op(Recipe.name, f"%{recipe_name}%"))
-
-    return (await session.execute(stmt)).all()
 
 
 @router.post("/{recipe_id}/tag")
