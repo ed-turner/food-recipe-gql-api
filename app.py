@@ -7,7 +7,6 @@ from starlette_exporter.optional_metrics import response_body_size, \
 
 def create_app():
     from models.db.session import db
-    from models.db.base import Base
 
     from routes.tag import router as tag_router
     from routes.recipe import router as recipe_router
