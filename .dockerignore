@@ -1,0 +1,10 @@
+docker-compose.yml
+db-data
+.idea
+.pytest_cache
+.gitignore
+.venv
+pytest.ini
+tests
+Makefile
+README.md

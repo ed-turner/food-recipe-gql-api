@@ -12,12 +12,8 @@ COPY poetry.lock .
 
 RUN poetry install
 
-COPY gql gql
-COPY models models
-COPY settings.py .
-COPY app.py .
+COPY . .
 
-COPY ./start.sh /start.sh
 RUN chmod +x /start.sh
 
 ENV PORT=80
